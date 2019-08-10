@@ -3,8 +3,6 @@
 #include <map>
 #include <string>
 
-//#include "prometheus/registry.h"
-
 namespace prometheus {
 
 template <typename T>

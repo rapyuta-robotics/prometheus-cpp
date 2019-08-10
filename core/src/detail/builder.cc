@@ -34,5 +34,10 @@ Family<T>& Builder<T>::Register(Registry& registry) {
   return registry.Add<T>(name_, help_, labels_);
 }
 
+template class Builder<Counter>;
+template class Builder<Gauge>;
+template class Builder<Histogram>;
+template class Builder<Summary>;
+
 }  // namespace detail
 }  // namespace prometheus
