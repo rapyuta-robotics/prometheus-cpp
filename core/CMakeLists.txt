@@ -2,6 +2,7 @@
 add_library(core
   src/check_names.cc
   src/counter.cc
+  src/detail/builder.cc
   src/detail/ckms_quantiles.cc
   src/detail/time_window_quantiles.cc
   src/detail/utils.cc
