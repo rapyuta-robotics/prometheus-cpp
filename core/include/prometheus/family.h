@@ -115,6 +115,16 @@ class Family : public Collectable {
   /// if the given metric was not returned by Add().
   void Remove(T* metric);
 
+  /// \brief Returns the name for this family.
+  ///
+  /// \return The family name.
+  const std::string& GetName() const;
+
+  /// \brief Returns the constant labels for this family.
+  ///
+  /// \return All constant labels as key-value pairs .
+  const std::map<std::string, std::string> GetConstantLabels() const;
+
   /// \brief Returns the current value of each dimensional data.
   ///
   /// Collect is called by the Registry when collecting metrics.
@@ -186,6 +196,16 @@ void Family<T>::Remove(T* metric) {
   metrics_.erase(hash);
   labels_.erase(hash);
   labels_reverse_lookup_.erase(metric);
+}
+
+template <typename T>
+const std::string& Family<T>::GetName() const {
+  return name_;
+}
+
+template <typename T>
+const std::map<std::string, std::string> Family<T>::GetConstantLabels() const {
+  return constant_labels_;
 }
 
 template <typename T>

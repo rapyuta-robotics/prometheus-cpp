@@ -39,5 +39,79 @@ TEST(RegistryTest, build_histogram_family) {
   ASSERT_EQ(collected.size(), 1U);
 }
 
+TEST(RegistryTest, reject_type_different_than_counter) {
+  const auto same_name = std::string{"same_name"};
+  Registry registry{};
+
+  EXPECT_NO_THROW(BuildCounter().Name(same_name).Register(registry));
+  EXPECT_ANY_THROW(BuildGauge().Name(same_name).Register(registry));
+  EXPECT_ANY_THROW(BuildHistogram().Name(same_name).Register(registry));
+  EXPECT_ANY_THROW(BuildSummary().Name(same_name).Register(registry));
+}
+
+TEST(RegistryTest, reject_type_different_than_gauge) {
+  const auto same_name = std::string{"same_name"};
+  Registry registry{};
+
+  EXPECT_NO_THROW(BuildGauge().Name(same_name).Register(registry));
+  EXPECT_ANY_THROW(BuildCounter().Name(same_name).Register(registry));
+  EXPECT_ANY_THROW(BuildHistogram().Name(same_name).Register(registry));
+  EXPECT_ANY_THROW(BuildSummary().Name(same_name).Register(registry));
+}
+
+TEST(RegistryTest, reject_type_different_than_histogram) {
+  const auto same_name = std::string{"same_name"};
+  Registry registry{};
+
+  EXPECT_NO_THROW(BuildHistogram().Name(same_name).Register(registry));
+  EXPECT_ANY_THROW(BuildCounter().Name(same_name).Register(registry));
+  EXPECT_ANY_THROW(BuildGauge().Name(same_name).Register(registry));
+  EXPECT_ANY_THROW(BuildSummary().Name(same_name).Register(registry));
+}
+
+TEST(RegistryTest, reject_type_different_than_summary) {
+  const auto same_name = std::string{"same_name"};
+  Registry registry{};
+
+  EXPECT_NO_THROW(BuildSummary().Name(same_name).Register(registry));
+  EXPECT_ANY_THROW(BuildCounter().Name(same_name).Register(registry));
+  EXPECT_ANY_THROW(BuildGauge().Name(same_name).Register(registry));
+  EXPECT_ANY_THROW(BuildHistogram().Name(same_name).Register(registry));
+}
+
+TEST(RegistryTest, append_same_families) {
+  Registry registry{Registry::InsertBehavior::Append};
+
+  std::size_t loops = 4;
+
+  while (loops-- > 0) {
+    BuildCounter()
+        .Name("counter")
+        .Help("Test Counter")
+        .Register(registry)
+        .Add({{"name", "test_counter"}});
+  }
+
+  auto collected = registry.Collect();
+  EXPECT_EQ(4U, collected.size());
+}
+
+TEST(RegistryTest, merge_same_families) {
+  Registry registry{Registry::InsertBehavior::Merge};
+
+  std::size_t loops = 4;
+
+  while (loops-- > 0) {
+    BuildCounter()
+        .Name("counter")
+        .Help("Test Counter")
+        .Register(registry)
+        .Add({{"name", "test_counter"}});
+  }
+
+  auto collected = registry.Collect();
+  EXPECT_EQ(1U, collected.size());
+}
+
 }  // namespace
 }  // namespace prometheus
