@@ -1,6 +1,7 @@
+#include "prometheus/registry.h"
 #include "prometheus/counter.h"
 #include "prometheus/histogram.h"
-#include "prometheus/registry.h"
+#include "prometheus/summary.h"
 
 #include <vector>
 

@@ -34,6 +34,20 @@ class Builder;
 /// a data race.
 class Registry : public Collectable {
  public:
+  /// \brief How to deal with repeatedly added family names for a type
+  enum class InsertBehavior {
+    /// \brief Create new family object and append
+    Append,
+    /// \brief Merge with existing ones if possible
+    Merge,
+  };
+
+  /// \brief name Create a new registry.
+  ///
+  /// \param insert_behavior How to handle families with the same name.
+  explicit Registry(InsertBehavior insert_behavior = InsertBehavior::Append)
+      : insert_behavior_{insert_behavior} {}
+
   /// \brief Returns a list of metrics and their samples.
   ///
   /// Every time the Registry is scraped it calls each of the metrics Collect
@@ -50,6 +64,7 @@ class Registry : public Collectable {
   Family<T>& Add(const std::string& name, const std::string& help,
                  const std::map<std::string, std::string>& labels);
 
+  const InsertBehavior insert_behavior_;
   std::vector<std::unique_ptr<Collectable>> collectables_;
   std::mutex mutex_;
 };
